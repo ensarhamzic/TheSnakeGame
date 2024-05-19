@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using TheSnakeGame.Properties;
 
@@ -27,6 +28,11 @@ namespace TheSnakeGame
         private void PaintGame(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+
+            DrawBackground(g);
+
+
+
             Rectangle bodyPart = new Rectangle(0, 0, snake.size, snake.size);
 
             foreach (Point p in snake.body)
@@ -46,8 +52,8 @@ namespace TheSnakeGame
                 int randomNumber2;
                 while (true)
                 {
-                    randomNumber = random.Next(0, 36);
-                    randomNumber2 = random.Next(0, 26);
+                    randomNumber = random.Next(0, width-1);
+                    randomNumber2 = random.Next(0, height-1);
 
                     bool isOnSnake = false;
 
@@ -67,6 +73,33 @@ namespace TheSnakeGame
             }
 
             DrawCircle(g, snake.size / 2, food.x * snake.size + snake.size / 2, food.y * snake.size + snake.size / 2);
+        }
+
+        private void DrawBackground(Graphics g)
+        {
+            int radius = 100;
+            PointF center = new PointF(150, 150);
+
+            PointF[] starPoints = new PointF[10];
+            double angle = Math.PI / 2;
+            double angleStep = Math.PI / 5;
+
+            for (int i = 0; i < 10; i++)
+            {
+                double r = radius * (i % 2 + 1) / 2;
+                starPoints[i] = new PointF((int)(center.X + r * Math.Cos(angle)), (int)(center.Y - r * Math.Sin(angle)));
+                angle += angleStep;
+            }
+            g.FillPolygon(Brushes.LightGray, starPoints);
+
+            Matrix matrix = new Matrix();
+            matrix.Scale(0.5f, 0.5f);
+            matrix.Translate(700, 300);
+            matrix.Rotate(45);
+            g.Transform = matrix;
+            g.FillPolygon(Brushes.LightGray, starPoints);
+
+            g.ResetTransform();
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
