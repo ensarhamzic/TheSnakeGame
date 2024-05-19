@@ -31,8 +31,6 @@ namespace TheSnakeGame
 
             DrawBackground(g);
 
-
-
             Rectangle bodyPart = new Rectangle(0, 0, snake.size, snake.size);
 
             foreach (Point p in snake.body)
