@@ -26,8 +26,16 @@ namespace TheSnakeGame
 
         private void PaintGame(object sender, PaintEventArgs e)
         {
-            foreach (Point p in snake.body)   
-                e.Graphics.FillRectangle(Brushes.Green, p.x * snake.size, p.y * snake.size, snake.size, snake.size);
+            Graphics g = e.Graphics;
+            Rectangle bodyPart = new Rectangle(0, 0, snake.size, snake.size);
+
+            foreach (Point p in snake.body)
+            {
+                g.TranslateTransform(p.x * snake.size, p.y * snake.size);
+                g.FillRectangle(Brushes.Green, bodyPart);
+                g.ResetTransform();
+            }
+               
 
             if (!isGameRunning) return;
 
@@ -58,7 +66,7 @@ namespace TheSnakeGame
                 food = new Point(randomNumber, randomNumber2);
             }
 
-            e.Graphics.FillEllipse(Brushes.DarkRed, food.x * snake.size, food.y * snake.size, snake.size, snake.size);
+            DrawCircle(g, snake.size / 2, food.x * snake.size + snake.size / 2, food.y * snake.size + snake.size / 2);
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
@@ -176,5 +184,37 @@ namespace TheSnakeGame
             time++;
             timerText.Text = time.ToString() + "s";
         }
+
+
+
+        private void DrawCircle(Graphics g, int radius, int h, int k)
+        {
+            int x = radius;
+            int y = 0;
+            int decisionOver2 = 1 - x;
+
+            while (y <= x)
+            {
+                DrawPixel(g, x + h, y + k);
+                DrawPixel(g, y + h, x + k);
+                DrawPixel(g, -x + h, y + k);
+                DrawPixel(g, -y + h, x + k);
+                DrawPixel(g, -x + h, -y + k);
+                DrawPixel(g, -y + h, -x + k);
+                DrawPixel(g, x + h, -y + k);
+                DrawPixel(g, y + h, -x + k);
+                y++;
+                if (decisionOver2 <= 0)
+                    decisionOver2 += 2 * y + 1;
+                else { x--; decisionOver2 += 2 * (y - x) + 1; }
+            }
+        }
+
+
+        private void DrawPixel(Graphics g, int x, int y)
+        {
+             g.FillRectangle(Brushes.Black, x, y, 1, 1);
+        }
+
     }
 }
